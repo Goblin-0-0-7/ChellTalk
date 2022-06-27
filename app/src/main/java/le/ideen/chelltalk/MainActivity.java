@@ -52,13 +52,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void askforbluetoothpermission() {
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_DENIED) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 2);
-                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.BLUETOOTH_ADVERTISE}, 2);
-                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.BLUETOOTH_SCAN}, 2);
-                return;
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            System.out.println("here");
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_ADVERTISE, Manifest.permission.BLUETOOTH_SCAN}, 101);
+            return;
         }
     }
 

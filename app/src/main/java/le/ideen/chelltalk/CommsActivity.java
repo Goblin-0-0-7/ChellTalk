@@ -28,12 +28,7 @@ import android.widget.TextView;
 
 public class CommsActivity extends AppCompatActivity {
 
-    //public BluetoothAdapter BTAdapter = BluetoothAdapter.getDefaultAdapter();
-    //public static BluetoothAdapter getDefaultAdapter();
-
-    //public Context context = getContext();
-    public BluetoothManager BTManager = (BluetoothManager)this.getSystemService(Context.BLUETOOTH_SERVICE);
-    public BluetoothAdapter BTAdapter = BTManager.getAdapter();
+    public BluetoothAdapter BTAdapter = BluetoothAdapter.getDefaultAdapter();
     private static final String TAG = "CommsActivity";
     BluetoothSocket mmSocket;
     BluetoothDevice mmDevice;
@@ -54,10 +49,6 @@ public class CommsActivity extends AppCompatActivity {
                 Log.e(TAG, "Socket's create() method failed", e);
             }
             mmSocket = tmp;
-            if (ActivityCompat.checkSelfPermission(CommsActivity.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-                askforbluetoothpermission();
-                return;
-            }
             BTAdapter.cancelDiscovery();
             try {
                 mmSocket.connect();
@@ -79,17 +70,6 @@ public class CommsActivity extends AppCompatActivity {
                 }
             }
             send();
-        }
-
-        public void askforbluetoothpermission() {
-            if (ContextCompat.checkSelfPermission(CommsActivity.this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_DENIED) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    ActivityCompat.requestPermissions(CommsActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 2);
-                    ActivityCompat.requestPermissions(CommsActivity.this, new String[]{Manifest.permission.BLUETOOTH_ADVERTISE}, 2);
-                    ActivityCompat.requestPermissions(CommsActivity.this, new String[]{Manifest.permission.BLUETOOTH_SCAN}, 2);
-                    return;
-                }
-            }
         }
 
         public void send() throws IOException {
@@ -124,6 +104,7 @@ public class CommsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_comms);
 
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        System.out.println(mBluetoothAdapter);
         final Intent intent = getIntent();
         final String address = intent.getStringExtra(MainActivity.EXTRA_ADDRESS);
         Button voltButton = (Button) findViewById(R.id.measVoltage);
