@@ -35,19 +35,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btn_enable = (Button) findViewById(R.id.button_enable); //Umbennenen in btn_
+        btn_enable = (Button) findViewById(R.id.button_enable);
         btn_disable = (Button) findViewById(R.id.button_disable);
         btn_scan = (Button) findViewById(R.id.button_scan);
 
         BTAdapter = BluetoothAdapter.getDefaultAdapter();
-        askforbluetoothpermission();
+        checkforbluetoothpermission();
         lv_pairedDevices = (ListView) findViewById(R.id.ListView_pairedDevices);
         if (BTAdapter.isEnabled()) {
             btn_scan.setVisibility(View.VISIBLE);
         }
     }
 
-    public void askforbluetoothpermission() {
+    public void checkforbluetoothpermission() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) +
             ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADVERTISE) +
             ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED)
@@ -63,10 +63,7 @@ public class MainActivity extends AppCompatActivity {
     public void on(View v) {
         if (!BTAdapter.isEnabled()) {
             Intent turnOn = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                askforbluetoothpermission();
-                return;
-            }
+            checkforbluetoothpermission();
             startActivityForResult(turnOn, 0);
             Toast.makeText(getApplicationContext(), "Turned on", Toast.LENGTH_SHORT).show();
         } else {
@@ -77,10 +74,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void off(View v) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            askforbluetoothpermission();
-            return;
-        }
+        checkforbluetoothpermission();
         BTAdapter.disable();
         Toast.makeText(getApplicationContext(), "Turned off", Toast.LENGTH_SHORT).show();
         btn_scan.setVisibility(View.INVISIBLE);
@@ -89,10 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void deviceList(View v) {
         ArrayList deviceList = new ArrayList();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            askforbluetoothpermission();
-            return;
-        }
+        checkforbluetoothpermission();
         pairedDevices = BTAdapter.getBondedDevices();
 
         if (pairedDevices.size() < 1) {

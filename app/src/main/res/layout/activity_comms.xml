@@ -8,22 +8,32 @@
     android:layout_height="match_parent">
 
     <Button
-        android:id="@+id/measVoltage"
-        android:layout_width="wrap_content"
+        android:id="@+id/button_Send"
+        android:layout_width="153dp"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="messen" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="126dp"
+        android:layout_marginEnd="132dp"
+        android:layout_marginBottom="247dp"
+        android:text="Send" />
 
     <TextView
-        android:layout_width="match_parent"
+        android:id="@+id/TextView_Answer"
+        android:layout_width="363dp"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
-        android:text="No voltage level available!"
+        android:layout_above="@+id/button_Send"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="143dp"
+        android:layout_marginEnd="23dp"
+        android:layout_marginBottom="233dp"
+        android:text="Answer"
         android:textAlignment="center"
-        android:textSize="40dp"
         android:textColor="#000000"
-        android:id="@+id/Voltage"
-        android:layout_below="@+id/measVoltage" />
+        android:textSize="40dp" />
 
 </RelativeLayout>
