@@ -49,6 +49,7 @@ public class CommsActivity extends AppCompatActivity {
                 Log.e(TAG, "Socket's create() method failed", e);
             }
             mmSocket = tmp;
+
             BTAdapter.cancelDiscovery();
             try {
                 mmSocket.connect();

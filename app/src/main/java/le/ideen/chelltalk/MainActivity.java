@@ -3,15 +3,12 @@ package le.ideen.chelltalk;
 import android.Manifest;
 import android.bluetooth.BluetoothSocket;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import java.util.Set;
 import java.util.ArrayList;
-import java.util.UUID;
 
 import android.view.View;
 import android.widget.AdapterView;
@@ -26,37 +23,41 @@ import android.bluetooth.BluetoothDevice;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button enablebt, disablebt, scanbt;
+    Button btn_enable, btn_disable, btn_scan;
     BluetoothSocket btSocket = null;
     private BluetoothAdapter BTAdapter;
     private Set<BluetoothDevice> pairedDevices;
-    ListView lv;
+    ListView lv_pairedDevices;
     public final static String EXTRA_ADDRESS = null;
-    static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        enablebt = (Button) findViewById(R.id.button_enablebt); //Umbennenen in btn_
-        disablebt = (Button) findViewById(R.id.button_disablebt);
-        scanbt = (Button) findViewById(R.id.button_scanbt);
+        btn_enable = (Button) findViewById(R.id.button_enable); //Umbennenen in btn_
+        btn_disable = (Button) findViewById(R.id.button_disable);
+        btn_scan = (Button) findViewById(R.id.button_scan);
 
         BTAdapter = BluetoothAdapter.getDefaultAdapter();
         askforbluetoothpermission();
-        lv = (ListView) findViewById(R.id.listView);
+        lv_pairedDevices = (ListView) findViewById(R.id.ListView_pairedDevices);
         if (BTAdapter.isEnabled()) {
-            scanbt.setVisibility(View.VISIBLE);
+            btn_scan.setVisibility(View.VISIBLE);
         }
     }
 
     public void askforbluetoothpermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            System.out.println("here");
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_ADVERTISE, Manifest.permission.BLUETOOTH_SCAN}, 101);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) +
+            ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADVERTISE) +
+            ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED)
+        {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT,
+                                                                                     Manifest.permission.BLUETOOTH_ADVERTISE,
+                                                                                     Manifest.permission.BLUETOOTH_SCAN}, 101);
             return;
         }
+        return;
     }
 
     public void on(View v) {
@@ -71,8 +72,8 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Toast.makeText(getApplicationContext(), "Already on", Toast.LENGTH_SHORT).show();
         }
-        scanbt.setVisibility(View.VISIBLE);
-        lv.setVisibility(View.VISIBLE);
+        btn_scan.setVisibility(View.VISIBLE);
+        lv_pairedDevices.setVisibility(View.VISIBLE);
     }
 
     public void off(View v) {
@@ -82,8 +83,8 @@ public class MainActivity extends AppCompatActivity {
         }
         BTAdapter.disable();
         Toast.makeText(getApplicationContext(), "Turned off", Toast.LENGTH_SHORT).show();
-        scanbt.setVisibility(View.INVISIBLE);
-        lv.setVisibility(View.GONE);
+        btn_scan.setVisibility(View.INVISIBLE);
+        lv_pairedDevices.setVisibility(View.GONE);
     }
 
     public void deviceList(View v) {
@@ -100,8 +101,8 @@ public class MainActivity extends AppCompatActivity {
             for (BluetoothDevice bt : pairedDevices) deviceList.add(bt.getName() + " " + bt.getAddress());
             Toast.makeText(getApplicationContext(), "Showing paired devices", Toast.LENGTH_SHORT).show();
             final ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, deviceList);
-            lv.setAdapter(adapter);
-            lv.setOnItemClickListener(myListClickListener);
+            lv_pairedDevices.setAdapter(adapter);
+            lv_pairedDevices.setOnItemClickListener(myListClickListener);
         }
     }
     private AdapterView.OnItemClickListener myListClickListener = new AdapterView.OnItemClickListener() {

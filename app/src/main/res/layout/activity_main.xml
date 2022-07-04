@@ -7,18 +7,18 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/button_enablebt"
+        android:id="@+id/button_enable"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="56dp"
         android:layout_marginBottom="36dp"
         android:onClick="on"
         android:text="Bluetooth activate"
-        app:layout_constraintBottom_toTopOf="@+id/button_disablebt"
+        app:layout_constraintBottom_toTopOf="@+id/button_disable"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
-        android:id="@+id/button_disablebt"
+        android:id="@+id/button_disable"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_marginEnd="40dp"
@@ -29,7 +29,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
-        android:id="@+id/button_scanbt"
+        android:id="@+id/button_scan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="44dp"
@@ -40,7 +40,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ListView
-        android:id="@+id/listView"
+        android:id="@+id/ListView_pairedDevices"
         android:layout_width="395dp"
         android:layout_height="456dp"
         android:layout_marginStart="8dp"
