@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
             lv_pairedDevices.setOnItemClickListener(myListClickListener);
         }
     }
+
     private AdapterView.OnItemClickListener myListClickListener = new AdapterView.OnItemClickListener() {
 
         @Override

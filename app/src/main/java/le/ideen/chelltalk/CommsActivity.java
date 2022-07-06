@@ -16,7 +16,6 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -27,7 +26,7 @@ public class CommsActivity extends AppCompatActivity {
     private static final String TAG = "CommsActivity";
     BluetoothSocket BTSocket;
     BluetoothDevice BTDevice;
-
+    /*
     public class ConnectThread extends Thread {
 
         private ConnectThread(BluetoothDevice device) throws IOException {
@@ -79,7 +78,7 @@ public class CommsActivity extends AppCompatActivity {
                 return;
             }
         }
-    }
+    }*/
 
     //doppelt, auch schon in MainActivity
     public void checkforbluetoothpermission() {
@@ -101,7 +100,6 @@ public class CommsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_comms);
 
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        System.out.println(mBluetoothAdapter);
         final Intent intent = getIntent();
         final String address = intent.getStringExtra(MainActivity.EXTRA_ADDRESS);
         Button btn_Send = (Button) findViewById(R.id.button_Send);
