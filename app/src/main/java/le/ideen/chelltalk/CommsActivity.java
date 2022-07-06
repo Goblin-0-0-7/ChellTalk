@@ -64,7 +64,7 @@ public class CommsActivity extends AppCompatActivity {
 
         public void receive() throws IOException {
             InputStream MSGInputStream = BTSocket.getInputStream();
-            byte[] buffer = new byte[256];
+            byte[] buffer = new byte[1024];
             int bytes;
 
             try {
@@ -101,7 +101,6 @@ public class CommsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_comms);
 
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        System.out.println(mBluetoothAdapter);
         final Intent intent = getIntent();
         final String address = intent.getStringExtra(MainActivity.EXTRA_ADDRESS);
         Button btn_Send = (Button) findViewById(R.id.button_Send);
