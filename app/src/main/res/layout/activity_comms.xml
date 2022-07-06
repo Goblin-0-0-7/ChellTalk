@@ -17,6 +17,7 @@
         android:layout_marginStart="126dp"
         android:layout_marginEnd="132dp"
         android:layout_marginBottom="247dp"
+        android:onClick="sendMSG"
         android:text="Send" />
 
     <TextView
@@ -35,5 +36,18 @@
         android:textAlignment="center"
         android:textColor="#000000"
         android:textSize="40dp" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button_Send"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="112dp"
+        android:layout_marginEnd="139dp"
+        android:layout_marginBottom="88dp"
+        android:onClick="connectToServer"
+        android:text="Connect" />
 
 </RelativeLayout>

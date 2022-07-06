@@ -2,12 +2,12 @@ package le.ideen.chelltalk;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.UUID;
 
 import android.bluetooth.BluetoothAdapter;
@@ -16,69 +16,40 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class CommsActivity extends AppCompatActivity {
 
-    public BluetoothAdapter BTAdapter = BluetoothAdapter.getDefaultAdapter();
+    public BluetoothAdapter mmBTAdapter = BluetoothAdapter.getDefaultAdapter();
     private static final String TAG = "CommsActivity";
-    BluetoothSocket BTSocket;
-    BluetoothDevice BTDevice;
-    /*
-    public class ConnectThread extends Thread {
+    private BluetoothSocket mmBTSocket;
+    private BluetoothDevice mmBTDevice;
+    private final Handler msgHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg){
+            switch (msg.what) {
+                case 0: //MESSAGE_READ
+                    String receivedMSG = new String((byte[]) msg.obj, 0, msg.arg1);
+                    Toast.makeText(getApplicationContext(), receivedMSG, Toast.LENGTH_LONG).show();
 
-        private ConnectThread(BluetoothDevice device) throws IOException {
-            BluetoothSocket tmpSocket = null;
-            BTDevice = device;
-            checkforbluetoothpermission();
-            try {
-                UUID uuid = UUID.fromString("94f39d29-7d6d-437d-973b-fba39e49d4ee");
-                tmpSocket = BTDevice.createRfcommSocketToServiceRecord(uuid);
-            } catch (IOException e) {
-                Log.e(TAG, "Socket's create() method failed", e);
-            }
-            BTSocket = tmpSocket;
-            BTAdapter.cancelDiscovery();
-            try {
-                BTSocket.connect();
-            } catch (IOException connectException) {
-                Log.v(TAG, "Connection exception!");
-                try {
-                    BTSocket.close();
-                } catch (IOException closeException) {
-                    Log.v(TAG, "Close Exception!");
-                }
-            }
-            send();
-        }
+                break;
 
-        public void send() throws IOException {
-            String msg = "new string";
-            OutputStream MSGOutputStream = BTSocket.getOutputStream();
-            MSGOutputStream.write(msg.getBytes());
-            receive();
-        }
+                case 1: //MESSAGE_WRITE
+                    String writtenMSG = msg.toString();
+                    System.out.println(writtenMSG);
 
-        public void receive() throws IOException {
-            InputStream MSGInputStream = BTSocket.getInputStream();
-            byte[] buffer = new byte[256];
-            int bytes;
+                break;
 
-            try {
-                bytes = MSGInputStream.read(buffer);
-                String readMessage = new String(buffer, 0, bytes);
-                Log.d(TAG, "Received: " + readMessage);
-                TextView tv_Answer = (TextView) findViewById(R.id.TextView_Answer);
-                tv_Answer.setText("Answer was: " + readMessage);
-                BTSocket.close();
-            } catch (IOException e) {
-                Log.e(TAG, "Problems occurred!");
-                return;
+                case 2: //MESSAGE_TOAST
+
+                break;
             }
         }
-    }*/
+    };
+    private ConnectThread BTThread;
 
     //doppelt, auch schon in MainActivity
     public void checkforbluetoothpermission() {
@@ -94,6 +65,31 @@ public class CommsActivity extends AppCompatActivity {
         return;
     }
 
+    public BluetoothSocket createConnection(BluetoothDevice device){
+        BluetoothSocket tmpSocket = null;
+        mmBTDevice = device;
+        checkforbluetoothpermission();
+        try {
+            UUID uuid = UUID.fromString("94f39d29-7d6d-437d-973b-fba39e49d4ee");
+            tmpSocket = mmBTDevice.createRfcommSocketToServiceRecord(uuid);
+        } catch (IOException e) {
+            Log.e(TAG, "Socket's create() method failed", e);
+        }
+        mmBTSocket = tmpSocket;
+        mmBTAdapter.cancelDiscovery();
+        try {
+            mmBTSocket.connect();
+        } catch (IOException connectException) {
+            Log.v(TAG, "Connection exception!");
+            try {
+                mmBTSocket.close();
+            } catch (IOException closeException) {
+                Log.v(TAG, "Close Exception!");
+            }
+        }
+        return mmBTSocket;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,14 +100,9 @@ public class CommsActivity extends AppCompatActivity {
         final String address = intent.getStringExtra(MainActivity.EXTRA_ADDRESS);
         Button btn_Send = (Button) findViewById(R.id.button_Send);
 
-        btn_Send.setOnClickListener(v -> {
-            final BluetoothDevice device = BTAdapter.getRemoteDevice(address);
-            try {
-                new ConnectThread(device).start();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        mmBTDevice = mmBTAdapter.getRemoteDevice(address);
+
+        connectToServer(null);
 
         if (!mBluetoothAdapter.isEnabled()) {
             checkforbluetoothpermission();
@@ -119,11 +110,31 @@ public class CommsActivity extends AppCompatActivity {
             startActivityForResult(enableBluetooth, 0);
         }
     }
+
+    public void connectToServer(View v){
+        try {
+            BluetoothSocket socket = createConnection(mmBTDevice);
+            BTThread = new ConnectThread(socket, msgHandler);
+            BTThread.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendMSG(View v){
+        String msag = "Hello There";
+        try{
+            BTThread.write(msag.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     protected void onStop() {
         super.onStop();
         try {
-            BTSocket.close();
+            mmBTSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
