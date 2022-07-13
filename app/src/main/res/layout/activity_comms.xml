@@ -11,43 +11,74 @@
         android:id="@+id/button_Send"
         android:layout_width="153dp"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/button_Connect"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="128dp"
+        android:layout_marginEnd="128dp"
+        android:layout_marginBottom="47dp"
+        android:onClick="sendKeyboardInput"
+        android:text="Send" />
+
+    <Button
+        android:id="@+id/button_Connect"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="126dp"
-        android:layout_marginEnd="132dp"
-        android:layout_marginBottom="247dp"
-        android:onClick="sendMSG"
-        android:text="Send" />
+        android:layout_marginStart="118dp"
+        android:layout_marginEnd="133dp"
+        android:layout_marginBottom="105dp"
+        android:onClick="connectToServer"
+        android:text="Connect" />
 
-    <TextView
-        android:id="@+id/TextView_Answer"
-        android:layout_width="363dp"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/button_Send"
+    <EditText
+        android:id="@+id/editText_KeyboardInput"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="143dp"
-        android:layout_marginEnd="23dp"
-        android:layout_marginBottom="233dp"
-        android:text="Answer"
-        android:textAlignment="center"
-        android:textColor="#000000"
-        android:textSize="40dp" />
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="44dp"
+        android:layout_marginEnd="33dp"
+        android:editable="true"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="KeyboardInput" />
 
     <Button
-        android:id="@+id/button"
-        android:layout_width="160dp"
+        android:id="@+id/button_RightClick"
+        android:layout_width="119dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button_Send"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="42dp"
+        android:layout_marginBottom="53dp"
+        android:onClick="sendRightClick"
+        android:text="Right Click" />
+
+    <Button
+        android:id="@+id/button_LeftClick"
+        android:layout_width="111dp"
         android:layout_height="wrap_content"
         android:layout_above="@+id/button_Send"
         android:layout_alignParentStart="true"
+        android:layout_marginStart="52dp"
+        android:layout_marginBottom="50dp"
+        android:onClick="sendLeftClick"
+        android:text="Left Click" />
+
+    <com.zerokol.views.JoystickView
+        android:id="@+id/JoystickView_Mouse"
+        android:layout_width="190dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="112dp"
-        android:layout_marginEnd="139dp"
-        android:layout_marginBottom="88dp"
-        android:onClick="connectToServer"
-        android:text="Connect" />
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="119dp"
+        android:layout_marginEnd="102dp"
+        android:layout_marginBottom="369dp" />
 
 </RelativeLayout>

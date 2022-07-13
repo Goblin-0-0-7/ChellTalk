@@ -24,7 +24,6 @@ import android.bluetooth.BluetoothDevice;
 public class MainActivity extends AppCompatActivity {
 
     Button btn_enable, btn_disable, btn_scan;
-    BluetoothSocket btSocket = null;
     private BluetoothAdapter BTAdapter;
     private Set<BluetoothDevice> pairedDevices;
     ListView lv_pairedDevices;

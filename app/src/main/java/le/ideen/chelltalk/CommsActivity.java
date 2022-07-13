@@ -16,13 +16,20 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
+
+import com.zerokol.views.JoystickView;
+import com.zerokol.views.JoystickView.OnJoystickMoveListener;
+
 
 
 public class CommsActivity extends AppCompatActivity {
 
+    EditText et_KeyboardInput;
     public BluetoothAdapter mmBTAdapter = BluetoothAdapter.getDefaultAdapter();
     private static final String TAG = "CommsActivity";
     private BluetoothSocket mmBTSocket;
@@ -30,25 +37,10 @@ public class CommsActivity extends AppCompatActivity {
     private final Handler msgHandler = new Handler(){
         @Override
         public void handleMessage(Message msg){
-            switch (msg.what) {
-                case 0: //MESSAGE_READ
-                    String receivedMSG = new String((byte[]) msg.obj, 0, msg.arg1);
-                    Toast.makeText(getApplicationContext(), receivedMSG, Toast.LENGTH_LONG).show();
-
-                break;
-
-                case 1: //MESSAGE_WRITE
-                    String writtenMSG = msg.toString();
-                    System.out.println(writtenMSG);
-
-                break;
-
-                case 2: //MESSAGE_TOAST
-
-                break;
-            }
-        }
+            handleThatShitUwU(msg);
+        };
     };
+
     private ConnectThread BTThread;
 
     //doppelt, auch schon in MainActivity
@@ -90,24 +82,23 @@ public class CommsActivity extends AppCompatActivity {
         return mmBTSocket;
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_comms);
+    public void handleThatShitUwU(Message msg){
+        switch (msg.what) {
+            case 0: //MESSAGE_READ
+                String receivedMSG = new String((byte[]) msg.obj, 0, msg.arg1);
+                Toast.makeText(getApplicationContext(), receivedMSG, Toast.LENGTH_LONG).show();
 
-        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        final Intent intent = getIntent();
-        final String address = intent.getStringExtra(MainActivity.EXTRA_ADDRESS);
-        Button btn_Send = (Button) findViewById(R.id.button_Send);
+                break;
 
-        mmBTDevice = mmBTAdapter.getRemoteDevice(address);
+            case 1: //MESSAGE_WRITE
+                String writtenMSG = msg.toString();
+                System.out.println(writtenMSG);
 
-        connectToServer(null);
+                break;
 
-        if (!mBluetoothAdapter.isEnabled()) {
-            checkforbluetoothpermission();
-            Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBluetooth, 0);
+            case 2: //MESSAGE_TOAST
+
+                break;
         }
     }
 
@@ -121,12 +112,60 @@ public class CommsActivity extends AppCompatActivity {
         }
     }
 
-    public void sendMSG(View v){
-        String msag = "Hello There";
+    public void sendMouseInput(){
+
+    }
+
+    public void sendKeyboardInput(View v){
+        String keyboardInput = et_KeyboardInput.getText().toString();
         try{
-            BTThread.write(msag.getBytes());
+            BTThread.write(keyboardInput.getBytes());
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void sendRightClick(View v){
+        String msg = "rightclick";
+        try{
+            BTThread.write(msg.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendLeftClick(View v){
+        String msg = "leftclick";
+        try{
+            BTThread.write(msg.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        final LayoutInflater factory = getLayoutInflater();
+
+        final View textEntryView = factory.inflate(R.layout.activity_comms, null);
+
+        et_KeyboardInput = (EditText) textEntryView.findViewById(R.id.editText_KeyboardInput);
+
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_comms);
+
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        final Intent intent = getIntent();
+        final String address = intent.getStringExtra(MainActivity.EXTRA_ADDRESS);
+
+        mmBTDevice = mmBTAdapter.getRemoteDevice(address);
+
+        connectToServer(null);
+
+        if (!mBluetoothAdapter.isEnabled()) {
+            checkforbluetoothpermission();
+            Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBluetooth, 0);
         }
     }
 
