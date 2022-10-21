@@ -26,7 +26,7 @@ import com.zerokol.views.JoystickView;
 import com.zerokol.views.JoystickView.OnJoystickMoveListener;
 
 
-
+//tada
 public class CommsActivity extends AppCompatActivity {
 
     EditText et_KeyboardInput;
