@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ArrayAdapter;
@@ -24,6 +25,7 @@ import android.bluetooth.BluetoothDevice;
 public class MainActivity extends AppCompatActivity {
 
     Button btn_enable, btn_disable, btn_scan;
+    Switch sw_connectionPartner;
     private BluetoothAdapter BTAdapter;
     private Set<BluetoothDevice> pairedDevices;
     ListView lv_pairedDevices;
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         btn_enable = (Button) findViewById(R.id.button_enable);
         btn_disable = (Button) findViewById(R.id.button_disable);
         btn_scan = (Button) findViewById(R.id.button_scan);
+        sw_connectionPartner = (Switch) findViewById(R.id.switch_ConnectionPartner);
 
         BTAdapter = BluetoothAdapter.getDefaultAdapter();
         checkforbluetoothpermission();
@@ -96,6 +99,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void switchChange(View v) {
+        if (sw_connectionPartner.isChecked()){
+            sw_connectionPartner.setText("Pi");
+        }
+        else{
+            sw_connectionPartner.setText("PC");
+        }
+    }
+
     private AdapterView.OnItemClickListener myListClickListener = new AdapterView.OnItemClickListener() {
 
         @Override
@@ -103,9 +115,16 @@ public class MainActivity extends AppCompatActivity {
             String info = ((TextView) view).getText().toString();
             String address = info.substring(info.length() - 17);
             Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(MainActivity.this, CommsActivity.class);
-            intent.putExtra(EXTRA_ADDRESS, address);
-            startActivity(intent);
+            if (sw_connectionPartner.isChecked()){
+                Intent intent = new Intent(MainActivity.this, PiActivity.class);
+                intent.putExtra(EXTRA_ADDRESS, address);
+                startActivity(intent);
+            }
+            else{
+                Intent intent = new Intent(MainActivity.this, CommsActivity.class);
+                intent.putExtra(EXTRA_ADDRESS, address);
+                startActivity(intent);
+            }
         }
     };
 }

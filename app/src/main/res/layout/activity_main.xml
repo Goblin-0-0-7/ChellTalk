@@ -32,11 +32,11 @@
         android:id="@+id/button_scan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="44dp"
-        android:layout_marginBottom="132dp"
+        android:layout_marginStart="56dp"
+        android:layout_marginBottom="64dp"
         android:onClick="deviceList"
         android:text="Scan"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/switch_ConnectionPartner"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ListView
@@ -49,5 +49,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Switch
+        android:id="@+id/switch_ConnectionPartner"
+        android:layout_width="84dp"
+        android:layout_height="49dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="48dp"
+        android:onClick="switchChange"
+        android:text="PC"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
