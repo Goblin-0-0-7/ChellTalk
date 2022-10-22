@@ -22,11 +22,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.zerokol.views.JoystickView;
-import com.zerokol.views.JoystickView.OnJoystickMoveListener;
 
 
-//tada
 public class CommsActivity extends AppCompatActivity {
 
     EditText et_KeyboardInput;
@@ -118,6 +115,7 @@ public class CommsActivity extends AppCompatActivity {
 
     public void sendKeyboardInput(View v){
         String keyboardInput = et_KeyboardInput.getText().toString();
+        System.out.println(keyboardInput);
         try{
             BTThread.write(keyboardInput.getBytes());
         } catch (IOException e) {
@@ -143,17 +141,33 @@ public class CommsActivity extends AppCompatActivity {
         }
     }
 
+    public void sendRemove(View v){
+        String msg = "remove";
+        try{
+            BTThread.write(msg.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendSpace(View v){
+        String msg = "space";
+        try{
+            BTThread.write(msg.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         final LayoutInflater factory = getLayoutInflater();
-
-        final View textEntryView = factory.inflate(R.layout.activity_comms, null);
-
-        et_KeyboardInput = (EditText) textEntryView.findViewById(R.id.editText_KeyboardInput);
+        final View commsView = factory.inflate(R.layout.activity_comms, null);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comms);
 
+        et_KeyboardInput = (EditText) findViewById(R.id.editText_KeyboardInput);
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         final Intent intent = getIntent();
         final String address = intent.getStringExtra(MainActivity.EXTRA_ADDRESS);
