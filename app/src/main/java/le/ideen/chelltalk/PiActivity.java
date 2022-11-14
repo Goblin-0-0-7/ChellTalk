@@ -16,14 +16,13 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -31,9 +30,15 @@ import android.widget.Toast;
 
 public class PiActivity extends AppCompatActivity {
 
-    SeekBar sb_red, sb_green, sb_blue;
+    SeekBar sb_red, sb_green, sb_blue, sb_fade_speed;
     EditText et_red_value, et_green_value, et_blue_value;
+    Button bt_fade;
+    //defaults
     private int[] rgb_value = {0,0,0};
+    private boolean fade_status = false;
+    private int fade_speed_max = 200;
+    private int fade_speed_min = 1;
+
     public BluetoothAdapter mmBTAdapter = BluetoothAdapter.getDefaultAdapter();
     private static final String TAG = "PiActivity";
     private BluetoothSocket mmBTSocket;
@@ -115,16 +120,39 @@ public class PiActivity extends AppCompatActivity {
         }
     }
 
-    public void sendColorCode(){
-        String red_value = Integer.toString(rgb_value[0]);
-        String green_value = Integer.toString(rgb_value[1]);
-        String blue_value = Integer.toString(rgb_value[2]);
-        String msg = red_value + "," + green_value + "," + blue_value + ","; //the "," at the end is for seperation if two msg get sent together
+    public void sendMsg(String msg){
         try{
             BTThread.write(msg.getBytes());
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void sendColorCode(){
+        String red_value = Integer.toString(rgb_value[0]);
+        String green_value = Integer.toString(rgb_value[1]);
+        String blue_value = Integer.toString(rgb_value[2]);
+        String msg = "-rgbCode-" + red_value + "," + green_value + "," + blue_value + ","; //the "," at the end is for separation if two msg get sent together
+        sendMsg(msg);
+    }
+
+    public void sendFade(View v){
+        fade_status = !fade_status;
+        if(fade_status){
+            sendMsg("-fade-");
+            bt_fade.setText("End Fade");
+            sb_fade_speed.setVisibility(View.VISIBLE);
+        }
+        else{
+            sendMsg("-black-");
+            bt_fade.setText("Start Fade");
+            sb_fade_speed.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    public void sendFadeSpeed(int speed){
+        String msg = "-fadeSpeed-" + speed;
+        sendMsg(msg);
     }
 
     @Override
@@ -135,9 +163,17 @@ public class PiActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pi);
 
+        bt_fade = (Button) findViewById(R.id.button_fade);
+        sb_fade_speed = (SeekBar) findViewById(R.id.seekBar_fade_speed);
+
         et_red_value = (EditText) findViewById(R.id.editTextNumber_red_value);
         et_green_value = (EditText) findViewById(R.id.editTextNumber_green_value);
         et_blue_value = (EditText) findViewById(R.id.editTextNumber_blue_value);
+
+        //set defaults
+        sb_fade_speed.setMax(fade_speed_max);
+        sb_fade_speed.setMin(fade_speed_min);
+        sb_fade_speed.setProgress(fade_speed_max/2);
 
         //editText Listeners on Done
         et_red_value.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -216,8 +252,7 @@ public class PiActivity extends AppCompatActivity {
         sb_red.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
 
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress,
-                                          boolean fromUser) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 rgb_value[0] = sb_red.getProgress();
                 et_red_value.setText(Integer.toString(rgb_value[0]));
                 sendColorCode();
@@ -234,10 +269,8 @@ public class PiActivity extends AppCompatActivity {
             }
         });
         sb_green.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
-
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress,
-                                          boolean fromUser) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 rgb_value[1] = sb_green.getProgress();
                 et_green_value.setText(Integer.toString(rgb_value[1]));
                 sendColorCode();
@@ -256,11 +289,27 @@ public class PiActivity extends AppCompatActivity {
         sb_blue.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
 
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress,
-                                          boolean fromUser) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 rgb_value[2] = sb_blue.getProgress();
                 et_blue_value.setText(Integer.toString(rgb_value[2]));
                 sendColorCode();
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+        });
+        sb_fade_speed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                int fadeSpeed = sb_fade_speed.getProgress();
+                sendFadeSpeed(fadeSpeed);
             }
 
             @Override

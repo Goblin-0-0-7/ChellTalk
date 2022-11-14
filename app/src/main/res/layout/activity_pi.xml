@@ -8,25 +8,24 @@
     android:focusableInTouchMode="true"
     tools:context=".PiActivity">
 
-    <EditText
-        android:id="@+id/editTextNumber_red_value"
-        android:layout_width="87dp"
-        android:layout_height="42dp"
-        android:layout_marginTop="112dp"
-        android:ems="10"
-        android:inputType="number"
-        android:text="0"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar_red" />
+    <Button
+        android:id="@+id/button_Connect_RGB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="160dp"
+        android:layout_marginBottom="44dp"
+        android:onClick="connectToServer"
+        android:text="Connect"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/editTextNumber_green_value"
         android:layout_width="87dp"
-        android:layout_height="42dp"
+        android:layout_height="48dp"
         android:layout_marginTop="88dp"
         android:ems="10"
+        android:importantForAutofill="no"
         android:inputType="number"
         android:text="0"
         android:textAlignment="center"
@@ -38,9 +37,10 @@
     <EditText
         android:id="@+id/editTextNumber_blue_value"
         android:layout_width="87dp"
-        android:layout_height="42dp"
+        android:layout_height="48dp"
         android:layout_marginTop="84dp"
         android:ems="10"
+        android:importantForAutofill="no"
         android:inputType="number"
         android:text="0"
         android:textAlignment="center"
@@ -49,20 +49,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/seekBar_blue" />
 
-    <SeekBar
-        android:id="@+id/seekBar_red"
-        android:layout_width="232dp"
-        android:layout_height="44dp"
-        android:layout_marginTop="168dp"
-        android:max="255"
-        android:onClick="sendColorCode"
-        android:progressTint="#7F0000"
-        android:rotation="-90"
-        android:thumbTint="#FF0000"
+    <EditText
+        android:id="@+id/editTextNumber_red_value"
+        android:layout_width="87dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="112dp"
+        android:ems="10"
+        android:importantForAutofill="no"
+        android:inputType="number"
+        android:text="0"
+        android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/seekBar_red"
+        tools:ignore="DuplicateSpeakableTextCheck" />
 
     <SeekBar
         android:id="@+id/seekBar_green"
@@ -71,12 +71,12 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="236dp"
         android:max="255"
-        android:onClick="sendColorCode"
         android:progressTint="#007F00"
         android:rotation="-90"
         android:thumbTint="#00FF00"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar_red" />
+        app:layout_constraintTop_toBottomOf="@+id/seekBar_red"
+        tools:ignore="SpeakableTextPresentCheck" />
 
     <SeekBar
         android:id="@+id/seekBar_blue"
@@ -84,13 +84,51 @@
         android:layout_height="34dp"
         android:layout_marginTop="236dp"
         android:max="255"
-        android:onClick="sendColorCode"
         android:progressTint="#00007F"
         android:rotation="-90"
         android:thumbTint="#0000FF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.36"
         app:layout_constraintStart_toEndOf="@+id/seekBar_green"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar_red" />
+        app:layout_constraintTop_toBottomOf="@+id/seekBar_red"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <SeekBar
+        android:id="@+id/seekBar_red"
+        android:layout_width="232dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="168dp"
+        android:max="255"
+        android:progressTint="#7F0000"
+        android:rotation="-90"
+        android:thumbTint="#FF0000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <Button
+        android:id="@+id/button_fade"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
+        android:layout_marginEnd="44dp"
+        android:onClick="sendFade"
+        android:text="Start Fade"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <SeekBar
+        android:id="@+id/seekBar_fade_speed"
+        android:layout_width="199dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="52dp"
+        android:progressTint="#00FFFFFF"
+        android:thumbTint="#5E5E5E"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
