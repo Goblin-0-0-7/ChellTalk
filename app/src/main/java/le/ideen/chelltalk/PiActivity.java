@@ -8,6 +8,9 @@ import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 
+import java.io.Console;
+import java.util.Calendar;
+
 import java.io.IOException;
 import java.util.UUID;
 
@@ -26,18 +29,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 public class PiActivity extends AppCompatActivity {
 
     SeekBar sb_red, sb_green, sb_blue, sb_fade_speed;
-    EditText et_red_value, et_green_value, et_blue_value;
+    EditText et_red_value, et_green_value, et_blue_value, et_alarm_title;
     Button bt_fade;
+    TimePicker timePicker;
     //defaults
     private int[] rgb_value = {0,0,0};
     private boolean fade_status = false;
     private int fade_speed_max = 200;
     private int fade_speed_min = 1;
+    private String screen_page = "RGB";
+
+    private String alarm_title = "Alarm Name";
 
     public BluetoothAdapter mmBTAdapter = BluetoothAdapter.getDefaultAdapter();
     private static final String TAG = "PiActivity";
@@ -155,13 +163,58 @@ public class PiActivity extends AppCompatActivity {
         sendMsg(msg);
     }
 
+    public void switchScreens(View v){
+        if (screen_page == "RGB"){
+            screen_page = "AlarmClock";
+            setScreen();
+        }
+        else if (screen_page == "AlarmClock"){
+            screen_page = "RGB";
+            setScreen();
+        }
+    }
+
+    public void setScreen(){
+        switch (screen_page){
+            case "RGB":
+                setContentView(R.layout.activity_pi);
+                break;
+            case "AlarmClock":
+                setContentView(R.layout.pi_clock_layout);
+                break;
+        }
+    }
+
+    public void newAlarm(View v){
+        System.out.println(alarm_title);
+        String hour = Integer.toString(timePicker.getHour());
+        String min = Integer.toString(timePicker.getMinute());
+        String sec = "0";
+        if (alarm_title == ""){
+            System.out.println("title empty");
+            alarm_title = hour + "-" + min + "-" + sec;
+        }
+        String alarm_time = alarm_title + "," + hour + "," + min + "," + sec + ",";
+        String msg = "-newAlarm-" + alarm_time;
+        sendMsg(msg);
+    }
+
+    public void newTestAlarm(View v){
+        sendMsg("-newTestAlarm-");
+    }
+
+    public void stopAlarm(View v){
+        sendMsg("-stopAlarm-");
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         final LayoutInflater factory = getLayoutInflater();
-        final View piView = factory.inflate(R.layout.activity_pi, null);
+        final View rgbView = factory.inflate(R.layout.activity_pi, null);
+        final View clockView = factory.inflate(R.layout.pi_clock_layout,null);
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pi);
+        setScreen();
 
         bt_fade = (Button) findViewById(R.id.button_fade);
         sb_fade_speed = (SeekBar) findViewById(R.id.seekBar_fade_speed);
@@ -169,11 +222,16 @@ public class PiActivity extends AppCompatActivity {
         et_red_value = (EditText) findViewById(R.id.editTextNumber_red_value);
         et_green_value = (EditText) findViewById(R.id.editTextNumber_green_value);
         et_blue_value = (EditText) findViewById(R.id.editTextNumber_blue_value);
+        et_alarm_title = (EditText) clockView.findViewById(R.id.editText_alarmTitle);
+
+        timePicker = (TimePicker) clockView.findViewById(R.id.timePicker);
 
         //set defaults
         sb_fade_speed.setMax(fade_speed_max);
         sb_fade_speed.setMin(fade_speed_min);
         sb_fade_speed.setProgress(fade_speed_max/2);
+        timePicker.setIs24HourView(true);
+        timePicker.setCurrentHour(Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
 
         //editText Listeners on Done
         et_red_value.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -237,6 +295,21 @@ public class PiActivity extends AppCompatActivity {
                     catch (NumberFormatException e){
                         sb_blue.setProgress(0);
                     }
+                    InputMethodManager imm = (InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        et_alarm_title.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        et_alarm_title.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    alarm_title = et_alarm_title.getText().toString();
+                    System.out.println(alarm_title);
                     InputMethodManager imm = (InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                     return true;
