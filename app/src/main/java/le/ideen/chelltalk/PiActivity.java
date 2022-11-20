@@ -23,9 +23,11 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -38,6 +40,7 @@ public class PiActivity extends AppCompatActivity {
     EditText et_red_value, et_green_value, et_blue_value, et_alarm_title;
     Button bt_fade;
     TimePicker timePicker;
+    CheckBox cb_monday, cb_tuesday, cb_wednesday, cb_thursday, cb_friday, cb_saturday, cb_sunday;
     //defaults
     private int[] rgb_value = {0,0,0};
     private boolean fade_status = false;
@@ -45,7 +48,7 @@ public class PiActivity extends AppCompatActivity {
     private int fade_speed_min = 1;
     private String screen_page = "RGB";
 
-    private String alarm_title = "Alarm Name";
+    private CheckBox[] cb_weekdays = new CheckBox[7];
 
     public BluetoothAdapter mmBTAdapter = BluetoothAdapter.getDefaultAdapter();
     private static final String TAG = "PiActivity";
@@ -186,15 +189,28 @@ public class PiActivity extends AppCompatActivity {
     }
 
     public void newAlarm(View v){
-        System.out.println(alarm_title);
+        String alarm_title = et_alarm_title.getText().toString();
+        System.out.println("alarmTitle is " + alarm_title);
         String hour = Integer.toString(timePicker.getHour());
         String min = Integer.toString(timePicker.getMinute());
         String sec = "0";
+        String repetition = "";
+        for (int i = 0; i < 7; i++){
+            if (cb_weekdays[i].isChecked()){
+                repetition += "1,";
+            }
+            else {
+                repetition += "0,";
+            }
+            cb_weekdays[i].setChecked(false);
+        }
+        repetition += "";
+
         if (alarm_title == ""){
             System.out.println("title empty");
             alarm_title = hour + "-" + min + "-" + sec;
         }
-        String alarm_time = alarm_title + "," + hour + "," + min + "," + sec + ",";
+        String alarm_time = alarm_title + "," + hour + "," + min + "," + sec + "," + repetition + ",";
         String msg = "-newAlarm-" + alarm_time;
         sendMsg(msg);
     }
@@ -211,7 +227,7 @@ public class PiActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         final LayoutInflater factory = getLayoutInflater();
         final View rgbView = factory.inflate(R.layout.activity_pi, null);
-        final View clockView = factory.inflate(R.layout.pi_clock_layout,null);
+        final View clockView = factory.inflate(R.layout.pi_clock_layout, null);
 
         super.onCreate(savedInstanceState);
         setScreen();
@@ -223,6 +239,22 @@ public class PiActivity extends AppCompatActivity {
         et_green_value = (EditText) findViewById(R.id.editTextNumber_green_value);
         et_blue_value = (EditText) findViewById(R.id.editTextNumber_blue_value);
         et_alarm_title = (EditText) clockView.findViewById(R.id.editText_alarmTitle);
+
+        cb_monday = (CheckBox) clockView.findViewById(R.id.checkBox_monday);
+        cb_tuesday = (CheckBox) clockView.findViewById(R.id.checkBox_tuesday);
+        cb_wednesday = (CheckBox) clockView.findViewById(R.id.checkBox_wednesday);
+        cb_thursday = (CheckBox) clockView.findViewById(R.id.checkBox_thursday);
+        cb_friday = (CheckBox) clockView.findViewById(R.id.checkBox_friday);
+        cb_saturday = (CheckBox) clockView.findViewById(R.id.checkBox_saturday);
+        cb_sunday = (CheckBox) clockView.findViewById(R.id.checkBox_sunday);
+        cb_weekdays[0] = cb_monday;
+        cb_weekdays[1] = cb_tuesday;
+        cb_weekdays[2] = cb_wednesday;
+        cb_weekdays[3] = cb_thursday;
+        cb_weekdays[4] = cb_friday;
+        cb_weekdays[5] = cb_saturday;
+        cb_weekdays[6] = cb_sunday;
+
 
         timePicker = (TimePicker) clockView.findViewById(R.id.timePicker);
 
@@ -295,21 +327,6 @@ public class PiActivity extends AppCompatActivity {
                     catch (NumberFormatException e){
                         sb_blue.setProgress(0);
                     }
-                    InputMethodManager imm = (InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        et_alarm_title.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        et_alarm_title.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    alarm_title = et_alarm_title.getText().toString();
-                    System.out.println(alarm_title);
                     InputMethodManager imm = (InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                     return true;

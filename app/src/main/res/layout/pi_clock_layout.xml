@@ -38,26 +38,92 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_testAlarm" />
 
-    <TimePicker
-        android:id="@+id/timePicker"
-        android:layout_width="288dp"
-        android:layout_height="256dp"
-        android:layout_marginStart="65dp"
-        android:layout_marginTop="89dp"
-        android:soundEffectsEnabled="true"
-        android:timePickerMode="spinner"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_stopAlarm" />
-
     <Button
         android:id="@+id/button_newAlarm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="163dp"
-        android:layout_marginTop="72dp"
+        android:layout_marginStart="160dp"
+        android:layout_marginBottom="30dp"
         android:onClick="newAlarm"
         android:text="Set Alarm"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <CheckBox
+        android:id="@+id/checkBox_friday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="76dp"
+        android:minHeight="48dp"
+        android:text="Friday"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timePicker" />
+
+    <CheckBox
+        android:id="@+id/checkBox_saturday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="76dp"
+        android:minHeight="48dp"
+        android:text="Saturday"
+        app:layout_constraintStart_toEndOf="@+id/checkBox_friday"
+        app:layout_constraintTop_toBottomOf="@+id/timePicker" />
+
+    <CheckBox
+        android:id="@+id/checkBox_sunday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="76dp"
+        android:minHeight="48dp"
+        android:text="Sunday"
+        app:layout_constraintStart_toEndOf="@+id/checkBox_saturday"
+        app:layout_constraintTop_toBottomOf="@+id/timePicker" />
+
+    <CheckBox
+        android:id="@+id/checkBox_monday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:minHeight="48dp"
+        android:text="Monday"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timePicker" />
+
+    <CheckBox
+        android:id="@+id/checkBox_tuesday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="8dp"
+        android:minHeight="48dp"
+        android:text="Tuesday"
+        app:layout_constraintStart_toEndOf="@+id/checkBox_monday"
+        app:layout_constraintTop_toBottomOf="@+id/timePicker" />
+
+    <CheckBox
+        android:id="@+id/checkBox_wednesday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="8dp"
+        android:minHeight="48dp"
+        android:text="Wednesday"
+        app:layout_constraintStart_toEndOf="@+id/checkBox_tuesday"
+        app:layout_constraintTop_toBottomOf="@+id/timePicker" />
+
+    <CheckBox
+        android:id="@+id/checkBox_thursday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="8dp"
+        android:minHeight="48dp"
+        android:text="Thursday"
+        app:layout_constraintStart_toEndOf="@+id/checkBox_wednesday"
         app:layout_constraintTop_toBottomOf="@+id/timePicker" />
 
     <EditText
@@ -66,13 +132,28 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="104dp"
         android:layout_marginTop="20dp"
+        android:clickable="true"
         android:editable="true"
         android:ems="10"
-        android:inputType="textPersonName"
+        android:enabled="true"
+        android:hint="Alarm Name"
+        android:importantForAutofill="no"
+        android:inputType="text"
         android:minHeight="48dp"
-        android:text="Alarm Name"
+        android:singleLine="true"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_stopAlarm"
-        android:importantForAutofill="no" />
+        app:layout_constraintTop_toBottomOf="@+id/button_stopAlarm" />
+
+    <TimePicker
+        android:id="@+id/timePicker"
+        android:layout_width="288dp"
+        android:layout_height="256dp"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="76dp"
+        android:soundEffectsEnabled="true"
+        android:timePickerMode="spinner"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_stopAlarm" />
+
 
 </android.support.constraint.ConstraintLayout>
