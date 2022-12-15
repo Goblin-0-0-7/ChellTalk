@@ -19,6 +19,8 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -47,6 +49,8 @@ public class PiActivity extends AppCompatActivity {
     private int fade_speed_max = 200;
     private int fade_speed_min = 1;
     private String screen_page = "RGB";
+
+    private String alarm_title = "";
 
     private CheckBox[] cb_weekdays = new CheckBox[7];
 
@@ -186,6 +190,196 @@ public class PiActivity extends AppCompatActivity {
                 setContentView(R.layout.pi_clock_layout);
                 break;
         }
+        findViews();
+    }
+
+    public void findViews(){
+        switch (screen_page){
+            case "RGB":
+                bt_fade = (Button) findViewById(R.id.button_fade);
+                sb_fade_speed = (SeekBar) findViewById(R.id.seekBar_fade_speed);
+
+                et_red_value = (EditText) findViewById(R.id.editTextNumber_red_value);
+                et_green_value = (EditText) findViewById(R.id.editTextNumber_green_value);
+                et_blue_value = (EditText) findViewById(R.id.editTextNumber_blue_value);
+
+                //set defaults
+                sb_fade_speed.setMax(fade_speed_max);
+                sb_fade_speed.setMin(fade_speed_min);
+                sb_fade_speed.setProgress(fade_speed_max/2);
+
+                //editText Listeners on Done
+                et_red_value.setImeOptions(EditorInfo.IME_ACTION_DONE);
+                et_red_value.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        if (actionId == EditorInfo.IME_ACTION_DONE) {
+                            try {
+                                if (Integer.parseInt(et_red_value.getText().toString()) > 255) {
+                                    sb_red.setProgress(255);
+                                } else {
+                                    sb_red.setProgress(Integer.parseInt(et_red_value.getText().toString()));
+                                }
+                            }
+                            catch (NumberFormatException e){
+                                sb_red.setProgress(0);
+                            }
+                            InputMethodManager imm = (InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+
+                et_green_value.setImeOptions(EditorInfo.IME_ACTION_DONE);
+                et_green_value.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        if (actionId == EditorInfo.IME_ACTION_DONE) {
+                            try {
+                                if (Integer.parseInt(et_green_value.getText().toString()) > 255) {
+                                    sb_green.setProgress(255);
+                                } else {
+                                    sb_green.setProgress(Integer.parseInt(et_green_value.getText().toString()));
+                                }
+                            }
+                            catch (NumberFormatException e){
+                                sb_green.setProgress(0);
+                            }
+                            InputMethodManager imm = (InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+
+                et_blue_value.setImeOptions(EditorInfo.IME_ACTION_DONE);
+                et_blue_value.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        if (actionId == EditorInfo.IME_ACTION_DONE) {
+                            try {
+                                if (Integer.parseInt(et_blue_value.getText().toString()) > 255) {
+                                    sb_blue.setProgress(255);
+                                } else {
+                                    sb_blue.setProgress(Integer.parseInt(et_blue_value.getText().toString()));
+                                }
+                            }
+                            catch (NumberFormatException e){
+                                sb_blue.setProgress(0);
+                            }
+                            InputMethodManager imm = (InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+
+                sb_red = (SeekBar) findViewById(R.id.seekBar_red);
+                sb_green = (SeekBar) findViewById(R.id.seekBar_green);
+                sb_blue = (SeekBar) findViewById(R.id.seekBar_blue);
+                //seekBar listeners
+                sb_red.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        rgb_value[0] = sb_red.getProgress();
+                        et_red_value.setText(Integer.toString(rgb_value[0]));
+                        sendColorCode();
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                        // TODO Auto-generated method stub
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                        // TODO Auto-generated method stub
+                    }
+                });
+                sb_green.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        rgb_value[1] = sb_green.getProgress();
+                        et_green_value.setText(Integer.toString(rgb_value[1]));
+                        sendColorCode();
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                        // TODO Auto-generated method stub
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                        // TODO Auto-generated method stub
+                    }
+                });
+                sb_blue.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        rgb_value[2] = sb_blue.getProgress();
+                        et_blue_value.setText(Integer.toString(rgb_value[2]));
+                        sendColorCode();
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                        // TODO Auto-generated method stub
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                        // TODO Auto-generated method stub
+                    }
+                });
+                sb_fade_speed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        int fadeSpeed = sb_fade_speed.getProgress();
+                        sendFadeSpeed(fadeSpeed);
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                        // TODO Auto-generated method stub
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                        // TODO Auto-generated method stub
+                    }
+                });
+                break;
+            case "AlarmClock":
+                et_alarm_title = (EditText) findViewById(R.id.editText_alarmTitle);
+
+                cb_monday = (CheckBox) findViewById(R.id.checkBox_monday);
+                cb_tuesday = (CheckBox) findViewById(R.id.checkBox_tuesday);
+                cb_wednesday = (CheckBox) findViewById(R.id.checkBox_wednesday);
+                cb_thursday = (CheckBox) findViewById(R.id.checkBox_thursday);
+                cb_friday = (CheckBox) findViewById(R.id.checkBox_friday);
+                cb_saturday = (CheckBox) findViewById(R.id.checkBox_saturday);
+                cb_sunday = (CheckBox) findViewById(R.id.checkBox_sunday);
+                cb_weekdays[0] = cb_monday;
+                cb_weekdays[1] = cb_tuesday;
+                cb_weekdays[2] = cb_wednesday;
+                cb_weekdays[3] = cb_thursday;
+                cb_weekdays[4] = cb_friday;
+                cb_weekdays[5] = cb_saturday;
+                cb_weekdays[6] = cb_sunday;
+
+                timePicker = (TimePicker) findViewById(R.id.timePicker);
+
+                timePicker.setIs24HourView(true);
+                timePicker.setCurrentHour(Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
+                break;
+        }
     }
 
     public void newAlarm(View v){
@@ -231,187 +425,6 @@ public class PiActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setScreen();
-
-        bt_fade = (Button) findViewById(R.id.button_fade);
-        sb_fade_speed = (SeekBar) findViewById(R.id.seekBar_fade_speed);
-
-        et_red_value = (EditText) findViewById(R.id.editTextNumber_red_value);
-        et_green_value = (EditText) findViewById(R.id.editTextNumber_green_value);
-        et_blue_value = (EditText) findViewById(R.id.editTextNumber_blue_value);
-        et_alarm_title = (EditText) clockView.findViewById(R.id.editText_alarmTitle);
-
-        cb_monday = (CheckBox) clockView.findViewById(R.id.checkBox_monday);
-        cb_tuesday = (CheckBox) clockView.findViewById(R.id.checkBox_tuesday);
-        cb_wednesday = (CheckBox) clockView.findViewById(R.id.checkBox_wednesday);
-        cb_thursday = (CheckBox) clockView.findViewById(R.id.checkBox_thursday);
-        cb_friday = (CheckBox) clockView.findViewById(R.id.checkBox_friday);
-        cb_saturday = (CheckBox) clockView.findViewById(R.id.checkBox_saturday);
-        cb_sunday = (CheckBox) clockView.findViewById(R.id.checkBox_sunday);
-        cb_weekdays[0] = cb_monday;
-        cb_weekdays[1] = cb_tuesday;
-        cb_weekdays[2] = cb_wednesday;
-        cb_weekdays[3] = cb_thursday;
-        cb_weekdays[4] = cb_friday;
-        cb_weekdays[5] = cb_saturday;
-        cb_weekdays[6] = cb_sunday;
-
-
-        timePicker = (TimePicker) clockView.findViewById(R.id.timePicker);
-
-        //set defaults
-        sb_fade_speed.setMax(fade_speed_max);
-        sb_fade_speed.setMin(fade_speed_min);
-        sb_fade_speed.setProgress(fade_speed_max/2);
-        timePicker.setIs24HourView(true);
-        timePicker.setCurrentHour(Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
-
-        //editText Listeners on Done
-        et_red_value.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        et_red_value.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    try {
-                        if (Integer.parseInt(et_red_value.getText().toString()) > 255) {
-                            sb_red.setProgress(255);
-                        } else {
-                            sb_red.setProgress(Integer.parseInt(et_red_value.getText().toString()));
-                        }
-                    }
-                    catch (NumberFormatException e){
-                        sb_red.setProgress(0);
-                    }
-                    InputMethodManager imm = (InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        et_green_value.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        et_green_value.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    try {
-                        if (Integer.parseInt(et_green_value.getText().toString()) > 255) {
-                            sb_green.setProgress(255);
-                        } else {
-                            sb_green.setProgress(Integer.parseInt(et_green_value.getText().toString()));
-                        }
-                    }
-                    catch (NumberFormatException e){
-                        sb_green.setProgress(0);
-                    }
-                    InputMethodManager imm = (InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        et_blue_value.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        et_blue_value.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    try {
-                        if (Integer.parseInt(et_blue_value.getText().toString()) > 255) {
-                            sb_blue.setProgress(255);
-                        } else {
-                            sb_blue.setProgress(Integer.parseInt(et_blue_value.getText().toString()));
-                        }
-                    }
-                    catch (NumberFormatException e){
-                        sb_blue.setProgress(0);
-                    }
-                    InputMethodManager imm = (InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        sb_red = (SeekBar) findViewById(R.id.seekBar_red);
-        sb_green = (SeekBar) findViewById(R.id.seekBar_green);
-        sb_blue = (SeekBar) findViewById(R.id.seekBar_blue);
-        //seekBar listeners
-        sb_red.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                rgb_value[0] = sb_red.getProgress();
-                et_red_value.setText(Integer.toString(rgb_value[0]));
-                sendColorCode();
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
-            }
-        });
-        sb_green.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                rgb_value[1] = sb_green.getProgress();
-                et_green_value.setText(Integer.toString(rgb_value[1]));
-                sendColorCode();
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
-            }
-        });
-        sb_blue.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                rgb_value[2] = sb_blue.getProgress();
-                et_blue_value.setText(Integer.toString(rgb_value[2]));
-                sendColorCode();
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
-            }
-        });
-        sb_fade_speed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                int fadeSpeed = sb_fade_speed.getProgress();
-                sendFadeSpeed(fadeSpeed);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
-            }
-        });
 
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         final Intent intent = getIntent();
