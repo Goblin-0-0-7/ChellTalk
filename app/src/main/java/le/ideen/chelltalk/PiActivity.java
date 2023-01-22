@@ -38,13 +38,16 @@ import android.widget.Toast;
 
 public class PiActivity extends AppCompatActivity {
 
-    SeekBar sb_red, sb_green, sb_blue, sb_fade_speed;
+    SeekBar sb_red, sb_green, sb_blue, sb_fade_speed, sb_strobe_frequency;
     EditText et_red_value, et_green_value, et_blue_value, et_alarm_title;
-    Button bt_fade;
+    Button bt_fade, bt_strobe;
     TimePicker timePicker;
     CheckBox cb_monday, cb_tuesday, cb_wednesday, cb_thursday, cb_friday, cb_saturday, cb_sunday;
     //defaults
     private int[] rgb_value = {0,0,0};
+    private boolean strobe_status = false;
+    private int strobe_frequency_max = 20;
+    private int strobe_frequency_min = 1;
     private boolean fade_status = false;
     private int fade_speed_max = 200;
     private int fade_speed_min = 1;
@@ -170,6 +173,25 @@ public class PiActivity extends AppCompatActivity {
         sendMsg(msg);
     }
 
+    public void sendStrobe(View v){
+        strobe_status = !strobe_status;
+        if(strobe_status){
+            sendMsg("-strobe-");
+            bt_strobe.setText("End Strobe");
+            sb_strobe_frequency.setVisibility(View.VISIBLE);
+        }
+        else{
+            sendMsg("-black-");
+            bt_strobe.setText("Start Strobe");
+            sb_strobe_frequency.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    public void sendStrobeFrequency(int frequency){
+        String msg = "-strobeFrequency-" + frequency;
+        sendMsg(msg);
+    }
+
     public void switchScreens(View v){
         if (screen_page == "RGB"){
             screen_page = "AlarmClock";
@@ -198,6 +220,8 @@ public class PiActivity extends AppCompatActivity {
             case "RGB":
                 bt_fade = (Button) findViewById(R.id.button_fade);
                 sb_fade_speed = (SeekBar) findViewById(R.id.seekBar_fade_speed);
+                bt_strobe = (Button) findViewById(R.id.button_strobe);
+                sb_strobe_frequency = (SeekBar) findViewById(R.id.seekBar_strobe_frequency);
 
                 et_red_value = (EditText) findViewById(R.id.editTextNumber_red_value);
                 et_green_value = (EditText) findViewById(R.id.editTextNumber_green_value);
@@ -207,6 +231,9 @@ public class PiActivity extends AppCompatActivity {
                 sb_fade_speed.setMax(fade_speed_max);
                 sb_fade_speed.setMin(fade_speed_min);
                 sb_fade_speed.setProgress(fade_speed_max/2);
+                sb_strobe_frequency.setMax(strobe_frequency_max);
+                sb_strobe_frequency.setMin(strobe_frequency_min);
+                sb_strobe_frequency.setProgress(strobe_frequency_max/2);
 
                 //editText Listeners on Done
                 et_red_value.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -343,6 +370,23 @@ public class PiActivity extends AppCompatActivity {
                     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                         int fadeSpeed = sb_fade_speed.getProgress();
                         sendFadeSpeed(fadeSpeed);
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                        // TODO Auto-generated method stub
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                        // TODO Auto-generated method stub
+                    }
+                });
+                sb_strobe_frequency.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        int strobeFrequency = sb_strobe_frequency.getProgress();
+                        sendStrobeFrequency(strobeFrequency);
                     }
 
                     @Override
