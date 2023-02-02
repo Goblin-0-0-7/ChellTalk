@@ -40,11 +40,12 @@ public class PiActivity extends AppCompatActivity {
 
     SeekBar sb_red, sb_green, sb_blue, sb_fade_speed, sb_strobe_frequency;
     EditText et_red_value, et_green_value, et_blue_value, et_alarm_title;
-    Button bt_fade, bt_strobe;
+    Button bt_fade, bt_strobe, bt_motion_sensor;
     TimePicker timePicker;
     CheckBox cb_monday, cb_tuesday, cb_wednesday, cb_thursday, cb_friday, cb_saturday, cb_sunday;
     //defaults
     private int[] rgb_value = {0,0,0};
+    private boolean motion_sensor_status = false;
     private boolean strobe_status = false;
     private int strobe_frequency_max = 20;
     private int strobe_frequency_min = 1;
@@ -192,6 +193,18 @@ public class PiActivity extends AppCompatActivity {
         sendMsg(msg);
     }
 
+    public void sendMotionSensor(View v){
+        motion_sensor_status = !motion_sensor_status;
+        if (motion_sensor_status){
+            sendMsg("-motionSensor-:activate");
+            bt_motion_sensor.setText(("Deactivate Motion Sensor"));
+        }
+        else{
+            sendMsg("-motionSensor-:deactivate");
+            bt_motion_sensor.setText(("Activate Motion Sensor"));
+        }
+    }
+
     public void switchScreens(View v){
         if (screen_page == "RGB"){
             screen_page = "AlarmClock";
@@ -222,6 +235,7 @@ public class PiActivity extends AppCompatActivity {
                 sb_fade_speed = (SeekBar) findViewById(R.id.seekBar_fade_speed);
                 bt_strobe = (Button) findViewById(R.id.button_strobe);
                 sb_strobe_frequency = (SeekBar) findViewById(R.id.seekBar_strobe_frequency);
+                bt_motion_sensor = (Button) findViewById(R.id.button_motion_sensor);
 
                 et_red_value = (EditText) findViewById(R.id.editTextNumber_red_value);
                 et_green_value = (EditText) findViewById(R.id.editTextNumber_green_value);
